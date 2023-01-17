@@ -28,7 +28,7 @@ jobs:
         run: npm run ts:check
 
       - name: Run tests
-        run: nyc npm run test
+        run: npx nyc npm run test
 
       - name: Build package
         run: npm run build

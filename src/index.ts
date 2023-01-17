@@ -1,8 +1,6 @@
 type EventHandler<TData = any> = (data: TData) => void;
 
-interface IEvents {
-  [channel: string]: Set<EventHandler>;
-}
+type IEvents = Map<string, Set<EventHandler>>;
 
 interface IUnsubscribe {
   (): EventManager;
@@ -15,7 +13,7 @@ class EventManager {
   /**
    * @private
    */
-  private static events: IEvents = {};
+  private static events: IEvents = new Map();
 
   /**
    * Subscribe handler on a channel
@@ -24,11 +22,11 @@ class EventManager {
     channelName: string,
     handler: EventHandler<TData>,
   ): IUnsubscribe => {
-    if (!EventManager.events[channelName]) {
-      EventManager.events[channelName] = new Set();
+    if (!EventManager.events.has(channelName)) {
+      EventManager.events.set(channelName, new Set());
     }
 
-    EventManager.events[channelName].add(handler);
+    EventManager.events.get(channelName)!.add(handler);
 
     return (): EventManager => EventManager.unsubscribe(channelName, handler);
   };
@@ -53,7 +51,7 @@ class EventManager {
    * Unsubscribe handler from a channel
    */
   static unsubscribe = (channelName: string, handler: (data?: any) => void): EventManager => {
-    EventManager.events?.[channelName].delete(handler);
+    EventManager.events.get(channelName)?.delete(handler);
 
     return EventManager;
   };
@@ -62,7 +60,7 @@ class EventManager {
    * Publish data to channel
    */
   static publish = <TData = any>(channelName: string, data?: TData): EventManager => {
-    EventManager.events?.[channelName]?.forEach((handler) => handler(data));
+    EventManager.events.get(channelName)?.forEach((handler) => handler(data));
 
     return EventManager;
   };

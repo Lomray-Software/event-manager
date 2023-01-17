@@ -1,6 +1,18 @@
 # Event manager on Typescript
 
-This package provides event manager on typescript for any JS/TS project (React/React Native/NodeJS).
+This package provides simple event manager on typescript for any JS/TS project (React/React Native/NodeJS).
+
+<p align="center">
+  <img src="https://sonarcloud.io/api/project_badges/measure?project=event-manager-lib&metric=reliability_rating" alt="reliability">
+  <img src="https://sonarcloud.io/api/project_badges/measure?project=event-manager-lib&metric=security_rating" alt="Security Rating">
+  <img src="https://sonarcloud.io/api/project_badges/measure?project=event-manager-lib&metric=sqale_rating" alt="Maintainability Rating">
+  <img src="https://sonarcloud.io/api/project_badges/measure?project=event-manager-lib&metric=vulnerabilities" alt="Vulnerabilities">
+  <img src="https://sonarcloud.io/api/project_badges/measure?project=event-manager-lib&metric=bugs" alt="Bugs">
+  <img src="https://sonarcloud.io/api/project_badges/measure?project=event-manager-lib&metric=ncloc" alt="Lines of Code">
+  <img src="https://img.shields.io/bundlephobia/minzip/@lomray/event-manager" alt="size">
+  <img src="https://img.shields.io/npm/l/@lomray/event-manager" alt="size">
+  <img src="https://img.shields.io/npm/v/@lomray/event-manager?label=semantic%20release&logo=semantic-release" alt="semantic version">
+</p>
 
 ## Usage
 

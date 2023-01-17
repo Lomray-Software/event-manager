@@ -1,4 +1,3 @@
-workflows
 .gitignore
 .github
 commitlint.config.js
@@ -7,9 +6,16 @@ rollup.config.js
 .husky
 .idea
 .editorconfig
-/index.ts
 /src
+.run
+__tests__
+__helpers__
 tsconfig.json
 .eslintrc.js
 .eslintignore
 .prettierrc.js
+.lintstagedrc.js
+.mocharc.js
+nyc.config.js
+sonar-project.properties
+

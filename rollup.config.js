@@ -1,5 +1,6 @@
 import typescript from 'rollup-plugin-ts';
 import ttypescript from 'ttypescript';
+import { terser } from 'rollup-plugin-terser';
 
 export default {
   input: 'src/index.ts',
@@ -16,5 +17,6 @@ export default {
         declaration: true,
       }),
     }),
+    terser(),
   ],
 };

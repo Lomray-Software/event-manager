@@ -41,7 +41,7 @@ class EventManager {
     const unsub = handlers.map((handler) => EventManager.subscribe(channelName, handler));
 
     return () => {
-      unsub.map((unsubscribe) => unsubscribe());
+      unsub.forEach((unsubscribe) => unsubscribe());
 
       return EventManager;
     };

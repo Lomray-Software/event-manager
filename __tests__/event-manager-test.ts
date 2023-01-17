@@ -59,11 +59,28 @@ describe('EventManager', () => {
     expect(callback2).to.calledOnceWith(payload);
   });
 
+  it('should correctly subscribe channels & publish many', () => {
+    const callback1 = sinon.stub();
+    const unsubscribeChannels = EventManager.subscribeChannels(['test1', 'test2'], callback1);
+
+    EventManager.publishMany(['test1', 'test2']);
+
+    unsubscribeChannels();
+
+    EventManager.publish('test2', 2);
+
+    expect(callback1.getCalls().length).to.equal(2);
+  });
+
   it('should correctly publish to not exist channel', () => {
-    EventManager.publish('not-exist');
+    const res = EventManager.publish('not-exist');
+
+    expect(res).to.equal(EventManager);
   });
 
   it('should correctly unsubscribe from not exist channel', () => {
-    EventManager.unsubscribe('unknown', () => null);
+    const res = EventManager.unsubscribe('unknown', () => null);
+
+    expect(res).to.equal(EventManager);
   });
 });

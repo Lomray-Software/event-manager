@@ -32,6 +32,18 @@ class EventManager {
   };
 
   /**
+   * Make unsubscribe function for many callbacks
+   * @protected
+   */
+  protected static makeUnsubscribe(unsub: IUnsubscribe[]): IUnsubscribe {
+    return () => {
+      unsub.forEach((unsubscribe) => unsubscribe());
+
+      return EventManager;
+    };
+  }
+
+  /**
    * Subscribe multiple handlers on a channel
    */
   static subscribeMany = <TData = any>(
@@ -40,11 +52,19 @@ class EventManager {
   ): IUnsubscribe => {
     const unsub = handlers.map((handler) => EventManager.subscribe(channelName, handler));
 
-    return () => {
-      unsub.forEach((unsubscribe) => unsubscribe());
+    return this.makeUnsubscribe(unsub);
+  };
 
-      return EventManager;
-    };
+  /**
+   * Subscribe handler on multiple channels
+   */
+  static subscribeChannels = <TData = any>(
+    channelNames: string[],
+    handler: EventHandler<TData>,
+  ): IUnsubscribe => {
+    const unsub = channelNames.map((channelName) => EventManager.subscribe(channelName, handler));
+
+    return this.makeUnsubscribe(unsub);
   };
 
   /**
@@ -61,6 +81,15 @@ class EventManager {
    */
   static publish = <TData = any>(channelName: string, data?: TData): EventManager => {
     EventManager.events.get(channelName)?.forEach((handler) => handler(data));
+
+    return EventManager;
+  };
+
+  /**
+   * Publish data to many channels
+   */
+  static publishMany = <TData = any>(channelNames: string[], data?: TData): EventManager => {
+    channelNames.forEach((channelName) => this.publish(channelName, data));
 
     return EventManager;
   };

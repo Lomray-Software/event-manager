@@ -60,6 +60,7 @@ jobs:
       - uses: actions/download-artifact@master
         with:
           name: coverage-artifacts
+          path: coverage
 
       - name: Get npm package version
         id: package-version

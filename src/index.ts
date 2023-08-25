@@ -1,10 +1,22 @@
-type EventHandler<TData = any> = (data: TData) => void;
-
-type IEvents = Map<string, Set<EventHandler>>;
+type EventHandler<TData = any> = (data?: TData) => void;
 
 interface IUnsubscribe {
   (): EventManager;
 }
+
+// For augmentation
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface IEventsPayload {}
+
+type TEventsKeys = keyof IEventsPayload | string;
+type TEventPayload<TChannel extends TEventsKeys> = TChannel extends keyof IEventsPayload
+  ? IEventsPayload[TChannel]
+  : any;
+
+type IEvents = Map<
+  keyof IEventsPayload | string,
+  Set<EventHandler<IEventsPayload[keyof IEventsPayload]>>
+>;
 
 /**
  * Simple event manager pattern for pub/sub
@@ -13,14 +25,14 @@ class EventManager {
   /**
    * @private
    */
-  private static events: IEvents = new Map();
+  private static readonly events: IEvents = new Map();
 
   /**
    * Subscribe handler on a channel
    */
-  static subscribe = <TData = any>(
-    channelName: string,
-    handler: EventHandler<TData>,
+  public static subscribe = <TChannel extends TEventsKeys>(
+    channelName: TChannel,
+    handler: EventHandler<TEventPayload<TChannel>>,
   ): IUnsubscribe => {
     if (!EventManager.events.has(channelName)) {
       EventManager.events.set(channelName, new Set());
@@ -46,9 +58,9 @@ class EventManager {
   /**
    * Subscribe multiple handlers on a channel
    */
-  static subscribeMany = <TData = any>(
-    channelName: string,
-    handlers: EventHandler<TData>[],
+  public static subscribeMany = <TChannel extends TEventsKeys>(
+    channelName: TChannel,
+    handlers: EventHandler<TEventPayload<TChannel>>[],
   ): IUnsubscribe => {
     const unsub = handlers.map((handler) => EventManager.subscribe(channelName, handler));
 
@@ -58,9 +70,9 @@ class EventManager {
   /**
    * Subscribe handler on multiple channels
    */
-  static subscribeChannels = <TData = any>(
-    channelNames: string[],
-    handler: EventHandler<TData>,
+  public static subscribeChannels = <TChannel extends TEventsKeys>(
+    channelNames: TChannel[],
+    handler: EventHandler<TEventPayload<TChannel>>,
   ): IUnsubscribe => {
     const unsub = channelNames.map((channelName) => EventManager.subscribe(channelName, handler));
 
@@ -70,7 +82,10 @@ class EventManager {
   /**
    * Unsubscribe handler from a channel
    */
-  static unsubscribe = (channelName: string, handler: (data?: any) => void): EventManager => {
+  public static unsubscribe = <TChannel extends TEventsKeys>(
+    channelName: TChannel,
+    handler: (data?: TEventPayload<TChannel>) => void,
+  ): EventManager => {
     EventManager.events.get(channelName)?.delete(handler);
 
     return EventManager;
@@ -79,8 +94,11 @@ class EventManager {
   /**
    * Publish data to channel
    */
-  static publish = <TData = any>(channelName: string, data?: TData): EventManager => {
-    EventManager.events.get(channelName)?.forEach((handler) => handler(data));
+  public static publish = <TChannel extends TEventsKeys>(
+    channelName: TChannel,
+    data?: TEventPayload<TChannel>,
+  ): EventManager => {
+    EventManager.events.get(channelName)?.forEach((handler) => handler(data as never));
 
     return EventManager;
   };
@@ -88,7 +106,10 @@ class EventManager {
   /**
    * Publish data to many channels
    */
-  static publishMany = <TData = any>(channelNames: string[], data?: TData): EventManager => {
+  public static publishMany = <TChannel extends TEventsKeys>(
+    channelNames: TChannel[],
+    data?: TEventPayload<TChannel>,
+  ): EventManager => {
     channelNames.forEach((channelName) => this.publish(channelName, data));
 
     return EventManager;

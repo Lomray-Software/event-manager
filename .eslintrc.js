@@ -1,7 +1,3 @@
-/**
- * This is root config for microservices
- * All microservices extends from this
- */
 module.exports = {
   root: true,
   extends: [

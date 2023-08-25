@@ -22,35 +22,39 @@ This package provides simple event manager on typescript for any JS/TS project (
   npm i --save @lomray/event-manager
 ```
 
-2. Add subscribers and emitters:
+2. Add subscribers and emit events:
 ```typescript
 import EventManager from '@lomray/event-manager';
-
-interface IDemoChannelData {
-    prop1: string;
-    prop2: number;
-}
 
 enum Channel {
     demo = 'demo'
 }
 
 // Listen event on channel (don't forget call unsubscribe for remove litener)
-const unsubscribe = EventManager.subscribe<IDemoChannelData>(Channel.demo, (data) => {
+const unsubscribe = EventManager.subscribe(Channel.demo, (data) => {
     console.log(data);
 });
 
 // Publish some data to channel
 setInterval(() => {
-  EventManager.publish<IDemoChannelData>(Channel.demo, { prop1: 'hi', prop2: 1 });
+  EventManager.publish(Channel.demo, { prop1: 'hi', prop2: 1 });
 }, 5000);
+
+// remove listener
+unsubscribe()
+
+// You can publish and subscribe on multiple channels
+EventManager.subscribe(['channel1', 'channel2'], (data) => {
+  console.log(data);
+});
+EventManager.publish(['channel1', 'channel2'], { prop1: 'hi', prop2: 1 });
 ```
 
 Working example for react:
 ```typescript
 const DemoComponent = () => {
     useEffect(() => {
-      const unsubscribe = EventManager.subscribe<IDemoChannelData>(Channel.demo, (data) => {
+      const unsubscribe = EventManager.subscribe(Channel.demo, (data) => {
         console.log(data);
       });
       
@@ -58,5 +62,18 @@ const DemoComponent = () => {
         unsubscribe();
       }
     });
+}
+```
+
+Example augmentation for describe payload events:
+```typescript
+
+declare module '@lomray/event-manager' {
+    export interface IEventsPayload {
+        [Channel.demo]: {
+            prop1: string;
+            prop2: number;
+        }
+    }
 }
 ```

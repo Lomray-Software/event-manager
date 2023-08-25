@@ -28,65 +28,40 @@ class EventManager {
   private static readonly events: IEvents = new Map();
 
   /**
+   * Normalize channels input
+   */
+  protected static getChannels = <TChannel extends TEventsKeys>(
+    channelName: TChannel | TChannel[],
+  ): TChannel[] => (Array.isArray(channelName) ? channelName : [channelName]);
+
+  /**
    * Subscribe handler on a channel
    */
   public static subscribe = <TChannel extends TEventsKeys>(
-    channelName: TChannel,
+    channelName: TChannel | TChannel[],
     handler: EventHandler<TEventPayload<TChannel>>,
   ): IUnsubscribe => {
-    if (!EventManager.events.has(channelName)) {
-      EventManager.events.set(channelName, new Set());
-    }
+    EventManager.getChannels(channelName).forEach((channel) => {
+      if (!EventManager.events.has(channel)) {
+        EventManager.events.set(channel, new Set());
+      }
 
-    EventManager.events.get(channelName)!.add(handler);
+      EventManager.events.get(channel)!.add(handler);
+    });
 
     return (): EventManager => EventManager.unsubscribe(channelName, handler);
-  };
-
-  /**
-   * Make unsubscribe function for many callbacks
-   * @protected
-   */
-  protected static makeUnsubscribe(unsub: IUnsubscribe[]): IUnsubscribe {
-    return () => {
-      unsub.forEach((unsubscribe) => unsubscribe());
-
-      return EventManager;
-    };
-  }
-
-  /**
-   * Subscribe multiple handlers on a channel
-   */
-  public static subscribeMany = <TChannel extends TEventsKeys>(
-    channelName: TChannel,
-    handlers: EventHandler<TEventPayload<TChannel>>[],
-  ): IUnsubscribe => {
-    const unsub = handlers.map((handler) => EventManager.subscribe(channelName, handler));
-
-    return this.makeUnsubscribe(unsub);
-  };
-
-  /**
-   * Subscribe handler on multiple channels
-   */
-  public static subscribeChannels = <TChannel extends TEventsKeys>(
-    channelNames: TChannel[],
-    handler: EventHandler<TEventPayload<TChannel>>,
-  ): IUnsubscribe => {
-    const unsub = channelNames.map((channelName) => EventManager.subscribe(channelName, handler));
-
-    return this.makeUnsubscribe(unsub);
   };
 
   /**
    * Unsubscribe handler from a channel
    */
   public static unsubscribe = <TChannel extends TEventsKeys>(
-    channelName: TChannel,
+    channelName: TChannel | TChannel[],
     handler: (data?: TEventPayload<TChannel>) => void,
   ): EventManager => {
-    EventManager.events.get(channelName)?.delete(handler);
+    EventManager.getChannels(channelName).forEach((channel) => {
+      EventManager.events.get(channel)?.delete(handler);
+    });
 
     return EventManager;
   };
@@ -95,22 +70,12 @@ class EventManager {
    * Publish data to channel
    */
   public static publish = <TChannel extends TEventsKeys>(
-    channelName: TChannel,
+    channelName: TChannel | TChannel[],
     data?: TEventPayload<TChannel>,
   ): EventManager => {
-    EventManager.events.get(channelName)?.forEach((handler) => handler(data as never));
-
-    return EventManager;
-  };
-
-  /**
-   * Publish data to many channels
-   */
-  public static publishMany = <TChannel extends TEventsKeys>(
-    channelNames: TChannel[],
-    data?: TEventPayload<TChannel>,
-  ): EventManager => {
-    channelNames.forEach((channelName) => this.publish(channelName, data));
+    EventManager.getChannels(channelName).forEach((channel) => {
+      EventManager.events.get(channel)?.forEach((handler) => handler(data));
+    });
 
     return EventManager;
   };

@@ -42,36 +42,6 @@ describe('EventManager', () => {
     expect(callback1).to.not.called;
   });
 
-  it('should correctly subscribe many', () => {
-    const callback1 = sinon.stub();
-    const callback2 = sinon.stub();
-    const payload = 'hello';
-
-    const unsubscribeMany = EventManager.subscribeMany('test2', [callback1, callback2]);
-
-    EventManager.publish('test2', payload);
-
-    unsubscribeMany();
-
-    EventManager.publish('test2', 'world');
-
-    expect(callback1).to.calledOnceWith(payload);
-    expect(callback2).to.calledOnceWith(payload);
-  });
-
-  it('should correctly subscribe channels & publish many', () => {
-    const callback1 = sinon.stub();
-    const unsubscribeChannels = EventManager.subscribeChannels(['test1', 'test2'], callback1);
-
-    EventManager.publishMany(['test1', 'test2']);
-
-    unsubscribeChannels();
-
-    EventManager.publish('test2', 2);
-
-    expect(callback1.getCalls().length).to.equal(2);
-  });
-
   it('should correctly publish to not exist channel', () => {
     const res = EventManager.publish('not-exist');
 

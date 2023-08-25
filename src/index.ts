@@ -1,4 +1,4 @@
-type EventHandler<TData = any> = (data?: TData) => void;
+type EventHandler<TData = any> = (data?: TData, channel?: string) => void;
 
 interface IUnsubscribe {
   (): EventManager;
@@ -74,7 +74,7 @@ class EventManager {
     data?: TEventPayload<TChannel>,
   ): EventManager => {
     EventManager.getChannels(channelName).forEach((channel) => {
-      EventManager.events.get(channel)?.forEach((handler) => handler(data));
+      EventManager.events.get(channel)?.forEach((handler) => handler(data, channel));
     });
 
     return EventManager;

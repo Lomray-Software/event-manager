@@ -65,6 +65,7 @@ const DemoComponent = () => {
         unsubscribe();
       }
     });
+    return null;
 }
 ```
 

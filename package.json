@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/Lomray-Software/event-manager",
   "scripts": {
+    "pretest": "npm run ts:check",
     "test": "cross-env NODE_ENV=tests TS_NODE_COMPILER_OPTIONS={\\\"target\\\":\\\"es6\\\"} mocha --harmony --no-warnings  __tests__ --require ts-node/register --recursive --unhandled-rejections=strict --exit",
     "build": "rollup -c",
     "prettier:format": "prettier --write 'src/**/*.{ts,tsx,*.ts,*tsx}'",

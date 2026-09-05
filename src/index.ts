@@ -1,7 +1,7 @@
 type EventHandler<TData = any> = (data?: TData, channel?: string) => void;
 
 interface IUnsubscribe {
-  (): EventManager;
+  (): typeof EventManager;
 }
 
 // For augmentation
@@ -51,7 +51,7 @@ class EventManager {
       EventManager.events.get(channel)!.add(handler);
     });
 
-    return (): EventManager => EventManager.unsubscribe(channels, handler);
+    return (): typeof EventManager => EventManager.unsubscribe(channels, handler);
   };
 
   /**
@@ -60,7 +60,7 @@ class EventManager {
   public static unsubscribe = <TChannel extends TEventsKeys>(
     channelName: TChannel | TChannel[],
     handler: (data?: TEventPayload<TChannel>) => void,
-  ): EventManager => {
+  ): typeof EventManager => {
     EventManager.getChannels(channelName).forEach((channel) => {
       const handlers = EventManager.events.get(channel);
 
@@ -81,7 +81,7 @@ class EventManager {
   public static publish = <TChannel extends TEventsKeys>(
     channelName: TChannel | TChannel[],
     data?: TEventPayload<TChannel>,
-  ): EventManager => {
+  ): typeof EventManager => {
     EventManager.getChannels(channelName).forEach((channel) => {
       const handlers = EventManager.events.get(channel);
 

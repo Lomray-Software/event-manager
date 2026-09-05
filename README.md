@@ -50,6 +50,9 @@ EventManager.subscribe(['channel1', 'channel2'], (data) => {
 EventManager.publish(['channel1', 'channel2'], { prop1: 'hi', prop2: 1 });
 ```
 
+Each channel's handlers are captured when dispatch for that channel starts. Subscriptions added or
+removed by a handler take effect on the next publication to that channel.
+
 Working example for react:
 ```typescript
 const DemoComponent = () => {

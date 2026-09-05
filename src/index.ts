@@ -41,7 +41,9 @@ class EventManager {
     channelName: TChannel | TChannel[],
     handler: EventHandler<TEventPayload<TChannel>>,
   ): IUnsubscribe => {
-    EventManager.getChannels(channelName).forEach((channel) => {
+    const channels = Array.from(EventManager.getChannels(channelName));
+
+    channels.forEach((channel) => {
       if (!EventManager.events.has(channel)) {
         EventManager.events.set(channel, new Set());
       }
@@ -49,7 +51,7 @@ class EventManager {
       EventManager.events.get(channel)!.add(handler);
     });
 
-    return (): EventManager => EventManager.unsubscribe(channelName, handler);
+    return (): EventManager => EventManager.unsubscribe(channels, handler);
   };
 
   /**
@@ -60,7 +62,13 @@ class EventManager {
     handler: (data?: TEventPayload<TChannel>) => void,
   ): EventManager => {
     EventManager.getChannels(channelName).forEach((channel) => {
-      EventManager.events.get(channel)?.delete(handler);
+      const handlers = EventManager.events.get(channel);
+
+      handlers?.delete(handler);
+
+      if (handlers?.size === 0) {
+        EventManager.events.delete(channel);
+      }
     });
 
     return EventManager;
@@ -68,13 +76,18 @@ class EventManager {
 
   /**
    * Publish data to channel
+   * Snapshot each channel's handlers when dispatch for that channel starts.
    */
   public static publish = <TChannel extends TEventsKeys>(
     channelName: TChannel | TChannel[],
     data?: TEventPayload<TChannel>,
   ): EventManager => {
     EventManager.getChannels(channelName).forEach((channel) => {
-      EventManager.events.get(channel)?.forEach((handler) => handler(data, channel));
+      const handlers = EventManager.events.get(channel);
+
+      if (handlers) {
+        Array.from(handlers).forEach((handler) => handler(data, channel));
+      }
     });
 
     return EventManager;

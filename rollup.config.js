@@ -21,14 +21,12 @@ export default {
     terser(),
     {
       /**
-       * Fix
-       * @see https://github.com/microsoft/TypeScript/issues/49536
+       * Match the CommonJS runtime export and preserve augmentable payload types.
        */
       writeBundle() {
         const dtsFile = 'lib/index.d.ts';
-        const dts = fs.readFileSync(dtsFile, { encoding: 'utf-8' });
 
-        fs.writeFileSync(dtsFile, dts.replaceAll('TChannel extends string', 'TChannel extends TEventsKeys'), { encoding: 'utf-8' });
+        fs.copyFileSync('types/index.d.ts', dtsFile);
       }
     }
   ],

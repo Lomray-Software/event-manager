@@ -53,10 +53,12 @@ try {
     run([npmCli, 'pack', '--ignore-scripts', '--json', '--pack-destination', temporary], staging),
   );
 
-  assert.deepEqual(
-    packed.files.map(({ path: filename }) => filename).sort(),
-    ['README.md', 'lib/index.d.ts', 'lib/index.js', 'package.json'],
-  );
+  assert.deepEqual(packed.files.map(({ path: filename }) => filename).sort(), [
+    'README.md',
+    'lib/index.d.ts',
+    'lib/index.js',
+    'package.json',
+  ]);
   writeFileSync(path.join(temporary, 'package.json'), JSON.stringify({ private: true }));
   run([
     npmCli,

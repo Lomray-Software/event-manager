@@ -5,7 +5,7 @@ interface IUnsubscribe {
 }
 
 // For augmentation
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type -- Consumers augment this interface with their channel payloads.
 export interface IEventsPayload {}
 
 // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents -- Payload keys are supplied by augmentation.

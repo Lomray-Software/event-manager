@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "./lib",
+    "noEmit": true,
     "allowJs": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -16,8 +16,8 @@
       "es2015",
       "es2017"
     ],
-    "module": "commonjs",
-    "moduleResolution": "Node",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
@@ -26,16 +26,9 @@
     "strictNullChecks": true,
     "strict": false,
     "pretty": true,
-    "suppressImplicitAnyIndexErrors": true,
     "target": "es5",
     "baseUrl": "."
   },
-  "exclude": [
-    "node_modules",
-    "build",
-    "lib",
-    "commitlint.config.js",
-    "nyc.config.js",
-    "rollup.config.js",
-  ]
+  "include": ["src", "__tests__", "__helpers__", "vitest.config.ts"],
+  "exclude": ["node_modules", "build", "lib"]
 }

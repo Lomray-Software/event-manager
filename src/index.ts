@@ -8,12 +8,14 @@ interface IUnsubscribe {
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface IEventsPayload {}
 
+// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents -- Payload keys are supplied by augmentation.
 type TEventsKeys = keyof IEventsPayload | string;
 type TEventPayload<TChannel extends TEventsKeys> = TChannel extends keyof IEventsPayload
   ? IEventsPayload[TChannel]
   : any;
 
 type IEvents = Map<
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents -- Payload keys are supplied by augmentation.
   keyof IEventsPayload | string,
   Set<EventHandler<IEventsPayload[keyof IEventsPayload]>>
 >;

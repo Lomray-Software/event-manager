@@ -1,0 +1,15 @@
+{
+  "name": "event-manager-docs-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node check.mjs"
+  },
+  "devDependencies": {
+    "ajv": "8.17.1",
+    "esbuild": "0.25.10",
+    "typescript": "5.9.2",
+    "@types/node": "22.18.6",
+    "@lomray/event-manager": "2.0.3"
+  }
+}

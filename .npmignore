@@ -21,3 +21,6 @@ eslint.config.js
 vitest.config.ts
 tsconfig.build.json
 scripts
+
+docs-tests
+context7.json

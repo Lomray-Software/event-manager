@@ -1,6 +1,6 @@
 # Event manager on Typescript
 
-This package provides simple event manager on typescript for any JS/TS project (React/React Native/NodeJS).
+A synchronous event manager for JavaScript and TypeScript.
 
 <p align="center">
   <img src="https://sonarcloud.io/api/project_badges/measure?project=event-manager-lib&metric=reliability_rating" alt="reliability">
@@ -16,68 +16,55 @@ This package provides simple event manager on typescript for any JS/TS project (
 
 ## Usage
 
-1. Install package:
+Use this for synchronous, in-process publish/subscribe between parts of one
+application. It is not a message broker: there is no persistence, replay, network
+transport, or per-request isolation. Channels belong to a static shared registry;
+do not use shared channels for private data across server requests.
 
 ```sh
-  npm i --save @lomray/event-manager
+npm i --save @lomray/event-manager
 ```
 
-2. Add subscribers and emit events:
+<!-- docs-test:example -->
 ```typescript
 import EventManager from '@lomray/event-manager';
 
-enum Channel {
-    demo = 'demo'
-}
-
-// Listen event on channel (don't forget call unsubscribe for remove litener)
-const unsubscribe = EventManager.subscribe(Channel.demo, (data) => {
-    console.log(data);
+const received: string[] = [];
+const unsubscribe = EventManager.subscribe('example:message', (data: string | undefined) => {
+  if (data !== undefined) {
+    received.push(data);
+  }
 });
 
-// Publish some data to channel
-setInterval(() => {
-  EventManager.publish(Channel.demo, { prop1: 'hi', prop2: 1 });
-}, 5000);
-
-// remove listener
-unsubscribe()
-
-// You can publish and subscribe on multiple channels
-EventManager.subscribe(['channel1', 'channel2'], (data) => {
-  console.log(data);
-});
-EventManager.publish(['channel1', 'channel2'], { prop1: 'hi', prop2: 1 });
+EventManager.publish('example:message', 'hello');
+unsubscribe();
+EventManager.publish('example:message', 'not received');
+console.log(received); // ['hello']
 ```
 
-Each channel's handlers are captured when dispatch for that channel starts. Subscriptions added or
-removed by a handler take effect on the next publication to that channel.
+Retain the unsubscribe function and call it when the subscriber is no longer
+needed. In a React effect, return a cleanup function that calls it. If you also
+start a timer, clear that timer separately. An unsubscribe function removes a
+handler, not other work started by your application.
 
-Working example for react:
-```typescript
-const DemoComponent = () => {
-    useEffect(() => {
-      const unsubscribe = EventManager.subscribe(Channel.demo, (data) => {
-        console.log(data);
-      });
-      
-      return () => {
-        unsubscribe();
-      }
-    });
-    return null;
-}
-```
+Both `subscribe` and `publish` accept a channel name or an array of channel names.
+Each channel's handlers are captured when dispatch for that channel starts.
+Subscriptions added or removed by a handler take effect on the next publication
+to that channel. Handler exceptions propagate to the caller.
 
-Example augmentation for describe payload events:
+For typed payloads, augment the exported interface in an application module:
+
 ```typescript
+import '@lomray/event-manager';
 
 declare module '@lomray/event-manager' {
-    export interface IEventsPayload {
-        [Channel.demo]: {
-            prop1: string;
-            prop2: number;
-        }
-    }
+  interface IEventsPayload {
+    'order:created': { orderId: string };
+  }
 }
 ```
+
+The bounded subscribe/publish/unsubscribe example is checked against release 2.0.3.
+The package is CommonJS; the TypeScript example uses default-import interop.
+A native CommonJS consumer can use
+`const EventManager = require('@lomray/event-manager')`.

@@ -1,25 +1,20 @@
-import typescript from 'rollup-plugin-ts';
-import ttypescript from 'ttypescript';
-import terser from '@rollup/plugin-terser';
-import fs from 'node:fs';
+const fs = require('node:fs');
+const terser = require('@rollup/plugin-terser');
+const typescript = require('@rollup/plugin-typescript');
 
-export default {
+module.exports = {
   input: 'src/index.ts',
   output: {
     dir: 'lib',
     format: 'cjs',
     preserveModules: true,
+    exports: 'auto',
   },
   plugins: [
-    typescript({
-      typescript: ttypescript,
-      tsconfig: resolvedConfig => ({
-        ...resolvedConfig,
-        declaration: true,
-      }),
-    }),
+    typescript({ tsconfig: './tsconfig.build.json' }),
     terser(),
     {
+      name: 'copy-public-declaration',
       /**
        * Match the CommonJS runtime export and preserve augmentable payload types.
        */
@@ -27,7 +22,7 @@ export default {
         const dtsFile = 'lib/index.d.ts';
 
         fs.copyFileSync('types/index.d.ts', dtsFile);
-      }
-    }
+      },
+    },
   ],
 };

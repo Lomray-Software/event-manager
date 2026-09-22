@@ -1,7 +1,10 @@
-import EventManager, { EventHandler, IUnsubscribe } from '../src';
+import type { EventHandler, IUnsubscribe } from '../src';
+import EventManager from '../src';
 
-// Compiled with tsc --noEmit by npm test's pretest hook; never invoked at runtime.
-export const checkChaining = (handler: EventHandler): void => {
+/**
+ * Compiled by npm run ts:check; never invoked at runtime.
+ */
+const checkChaining = (handler: EventHandler): void => {
   const published: typeof EventManager = EventManager.publish('a').publish('b');
   const unsubscribed: typeof EventManager = EventManager.unsubscribe('a', handler);
   const stop: IUnsubscribe = unsubscribed.subscribe('a', handler);
@@ -12,3 +15,5 @@ export const checkChaining = (handler: EventHandler): void => {
   cleaned.publish('b');
   void [published, chainedCleanup];
 };
+
+export default checkChaining;

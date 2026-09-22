@@ -12,13 +12,12 @@ rollup.config.js
 __tests__
 __helpers__
 tsconfig.json
-.eslintrc.js
-.eslintignore
 .prettierrc.js
 .lintstagedrc.js
-.mocharc.js
-nyc.config.js
 sonar-project.properties
-.nyc_output
 coverage
 .nvmrc
+eslint.config.js
+vitest.config.ts
+tsconfig.build.json
+scripts

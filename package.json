@@ -41,7 +41,7 @@
     "@commitlint/cli": "^19.4.1",
     "@commitlint/config-conventional": "^19.4.1",
     "@lomray/eslint-config": "^5.0.3",
-    "@lomray/prettier-config": "^2.0.1",
+    "@lomray/prettier-config": "^3.0.0",
     "@rollup/plugin-terser": "^1.0.0",
     "@rollup/plugin-typescript": "^12.3.0",
     "@semantic-release/commit-analyzer": "^13.0.1",
